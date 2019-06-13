@@ -1,0 +1,16 @@
+plugins {
+	id 'groovy'
+	id 'java'
+}
+
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.5.6'
+}
