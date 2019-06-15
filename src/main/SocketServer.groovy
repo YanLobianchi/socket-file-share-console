@@ -21,7 +21,7 @@ class SocketServer {
 				String caminhoDoArquivo = ""
 				try {
 					println("Insira o caminho do arquivo (de até 5MB): ")
-					caminhoDoArquivo = input.readLine()
+					caminhoDoArquivo = input.readLine().replaceAll(/([^(\\|\/).+]?)([\\\/])([^(\\|\/).+]?)/, '\\')
 					File file = new File(caminhoDoArquivo)
 					while (!file.exists() || file.length() > 5 * MEGABYTE) {
 						println("Arquivo inexistente ou tamanho maior que o limite.\n" +
