@@ -5,7 +5,7 @@ class SocketClient {
 	
 	public final static int SOCKET_PORT = 13267
 	public final static String SERVER = "127.0.0.1"
-	public final static String DESKTOP_PATH = "${System.getProperty("user.home")}\\Desktop\\"
+	public final static String DESKTOP_PATH = "${System.getProperty("user.home")}/Desktop/"
 	public final static int FILE_SIZE = 5 * 1024 * 1024
 	
 	static void main(String[] args) throws IOException {
