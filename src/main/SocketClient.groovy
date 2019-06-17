@@ -22,7 +22,7 @@ class SocketClient {
 			String nomeArquivo = ""
 			
 			try {
-				boolean sucesso = conectarEReceberInformacao { Socket socket ->
+				final boolean sucesso = conectarEReceberInformacao { Socket socket ->
 					ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream())
 					nomeArquivo = entrada.readUTF()
 				}
