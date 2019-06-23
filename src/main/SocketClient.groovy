@@ -12,10 +12,10 @@ class SocketClient {
 
 	static void main(String[] args) throws IOException {
 		BufferedReader input = System.in.newReader()
-		println("\t\tCliente Socket" +
-				        "1. TCP.\n" +
-				        "2. UDP.\n" +
-				        "0. Sair.")
+		println("\t\tCliente Socket\n" +
+				"1. TCP.\n" +
+				"2. UDP.\n" +
+				"0. Sair.")
 		int protocolo = input.readLine().toInteger()
 		while (protocolo != 0) {
 			switch (protocolo) {
@@ -30,16 +30,16 @@ class SocketClient {
 			}
 
 			println("1. TCP.\n" +
-					        "2. UDP.\n" +
-					        "0. Sair.")
+					"2. UDP.\n" +
+					"0. Sair.")
 			protocolo = input.readLine().toInteger()
 		}
 	}
 
 	static void clientTCP(final BufferedReader input = System.in.newReader()) throws IOException {
 		println("1. Receber arquivo do Servidor.\n" +
-				        "2. Enviar arquivo do Servidor.\n" +
-				        "0. Sair")
+				"2. Enviar arquivo do Servidor.\n" +
+				"0. Sair")
 		int opcao = input.readLine().toInteger()
 
 		while (opcao != 0) {
@@ -51,15 +51,15 @@ class SocketClient {
 				String nomeArquivo = ""
 
 				try {
-					final boolean sucesso = receberBufferTCP { Socket socket ->
+					final boolean sucesso = receberBufferTCP { final Socket socket ->
 						ObjectInputStream entrada = new ObjectInputStream(socket.getInputStream())
 						nomeArquivo = entrada.readUTF()
 					}
 
 					if (!nomeArquivo || !sucesso) {
 						println("1. Receber arquivo do Servidor.\n" +
-								        "2. Enviar arquivo do Servidor.\n" +
-								        "0. Sair")
+								"2. Enviar arquivo ao Servidor.\n" +
+								"0. Sair")
 						opcao = input.readLine().toInteger()
 						continue
 					}
@@ -100,12 +100,12 @@ class SocketClient {
 					File file = new File(caminhoDoArquivo)
 					while (!file.exists() || file.length() > FILE_SIZE) {
 						println("Arquivo inexistente ou tamanho maior que o limite.\n" +
-								        "Insira um caminho de um arquivo válido: ")
+								"Insira um caminho de um arquivo válido: ")
 						caminhoDoArquivo = input.readLine()
 						file = new File(caminhoDoArquivo)
 					}
 
-					enviarBufferTCP { Socket socket ->
+					enviarBufferTCP { final Socket socket ->
 						// envia nome do arquivo
 						ObjectOutputStream saida = new ObjectOutputStream(socket.getOutputStream())
 						saida.flush()
@@ -113,7 +113,7 @@ class SocketClient {
 						saida.close()
 					}
 
-					enviarBufferTCP { Socket socket ->
+					enviarBufferTCP { final Socket socket ->
 						// envia arquivo
 						bytes = new byte[(int) file.length()]
 						FileInputStream fis = new FileInputStream(file)
@@ -140,8 +140,8 @@ class SocketClient {
 				}
 			}
 			println("1. Receber arquivo do Servidor.\n" +
-					        "2. Enviar arquivo do Servidor.\n" +
-					        "0. Sair")
+					"2. Enviar arquivo do Servidor.\n" +
+					"0. Sair")
 			opcao = input.readLine().toInteger()
 		}
 	}
@@ -154,6 +154,7 @@ class SocketClient {
 		while (continuar) {
 			byte[] bytesNomeArquivo = new byte[FILE_SIZE_UDP]
 			try {
+				println("Aguardando...")
 				datagramPacket = new DatagramPacket(bytesNomeArquivo, bytesNomeArquivo.length)
 				datagramSocket.receive(datagramPacket)
 
@@ -166,12 +167,23 @@ class SocketClient {
 				}
 
 				byte[] bytes = new byte[FILE_SIZE]
-				while (bytes[bytes.length - 1] > -1) {
-					datagramPacket = new DatagramPacket(bytes, FILE_SIZE_UDP)
+				int tamanhoTotal = 0
+				byte[] tamanhoDeByteAtual = new byte[FILE_SIZE_UDP]
+				datagramPacket = new DatagramPacket(tamanhoDeByteAtual, tamanhoDeByteAtual.length)
+				datagramSocket.receive(datagramPacket)
+				int tamanho = Integer.valueOf(bytesToString(tamanhoDeByteAtual))
+
+				while (tamanho > FILE_SIZE_UDP) {
+					datagramPacket = new DatagramPacket(bytes, tamanho)
 					datagramSocket.receive(datagramPacket)
+					tamanhoTotal += tamanho
+					tamanhoDeByteAtual = new byte[FILE_SIZE_UDP]
+					datagramPacket = new DatagramPacket(tamanhoDeByteAtual, tamanhoDeByteAtual.length)
+					datagramSocket.receive(datagramPacket)
+					tamanho = Integer.valueOf(bytesToString(tamanhoDeByteAtual))
 				}
 
-				bytes = Arrays.copyOfRange(bytes, 0, bytes.findIndexOf { it == -1 })
+				bytes = Arrays.copyOfRange(bytes, 0, tamanhoTotal)
 
 				Files.write(Paths.get("$DESKTOP_PATH$nomeArquivo"), bytes)
 				println("Arquivo $nomeArquivo baixado (${bytes.length} bytes lidos) será salvo na área de trabalho")
@@ -215,7 +227,7 @@ class SocketClient {
 		}
 	}
 
-	static StringBuilder bytesToString(byte[] a) {
+	static String bytesToString(byte[] a) {
 		if (a == null) {
 			return null
 		}
@@ -223,6 +235,6 @@ class SocketClient {
 		for (int i = 0; a[i] != 0 as byte; i++) {
 			ret.append((char) a[i])
 		}
-		return ret
+		return ret.toString()
 	}
 }
