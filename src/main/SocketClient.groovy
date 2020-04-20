@@ -6,7 +6,7 @@ class SocketClient {
 	public final static int TCP_PORT = 13267
 	public final static int UDP_PORT = 12345
 	public final static String SERVER = "127.0.0.1"
-	public final static String DESKTOP_PATH = "${System.getProperty("user.home")}/Desktop/"
+	public final static String DESKTOP_PATH = "${System.getProperty('user.dir')}\\"
 	public final static int FILE_SIZE = 5 * 1024 * 1024
 	public final static int FILE_SIZE_UDP = 65507
 
@@ -79,7 +79,7 @@ class SocketClient {
 						bufferedOutputStream.flush()
 						bufferedOutputStream.close()
 						inputStream.close()
-						println("Arquivo $nomeArquivo baixado ($byteAtual bytes lidos) será salvo na área de trabalho")
+						println("Arquivo $nomeArquivo baixado ($byteAtual bytes lidos) será salvo no diretório atual")
 					}
 				} finally {
 					if (fileOutputStream) {
@@ -186,7 +186,7 @@ class SocketClient {
 				bytes = Arrays.copyOfRange(bytes, 0, tamanhoTotal)
 
 				Files.write(Paths.get("$DESKTOP_PATH$nomeArquivo"), bytes)
-				println("Arquivo $nomeArquivo baixado (${bytes.length} bytes lidos) será salvo na área de trabalho")
+				println("Arquivo $nomeArquivo baixado (${bytes.length} bytes lidos) será no diretório atual")
 
 				println("Continuar recebendo? (1 = sim, 0 = não)")
 				continuar = input.readLine().toInteger() as boolean

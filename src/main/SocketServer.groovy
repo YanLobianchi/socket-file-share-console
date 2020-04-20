@@ -7,7 +7,7 @@ class SocketServer {
 	public static final int UDP_MAX = 65507
 	public static final int TCP_PORT = 13267
 	public static final int UDP_PORT = 12345
-	public final static String DESKTOP_PATH = "${System.getProperty("user.home")}/Desktop/"
+	public final static String DESKTOP_PATH = "${System.getProperty('user.dir')}\\"
 	public final static int FILE_SIZE = 5 * 1024 * 1024
 
 	static void main(String[] args) throws IOException {
@@ -132,7 +132,7 @@ class SocketServer {
 						bufferedOutputStream.flush()
 						bufferedOutputStream.close()
 						inputStream.close()
-						println("Arquivo $nomeArquivo baixado ($byteAtual bytes lidos) será salvo na área de trabalho")
+						println("Arquivo $nomeArquivo baixado ($byteAtual bytes lidos) será no diretório atual")
 					} finally {
 						if (fileOutputStream) {
 							fileOutputStream.close()
